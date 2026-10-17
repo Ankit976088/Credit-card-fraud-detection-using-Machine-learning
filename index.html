@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Secure Checkout - Credit Card Fraud Detection</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <h1>Secure checkout</h1>
+      <p>Every payment is scanned by our fraud model <b>before</b> it goes through.</p>
+    </header>
+
+    <div class="layout">
+      <!-- LEFT: card + payment form -->
+      <section class="glass">
+        <div class="credit-card" aria-hidden="true">
+          <div class="cc-top">
+            <span class="cc-chip"></span>
+            <span class="cc-brand">SecurePay</span>
+          </div>
+          <div class="cc-number">••••&nbsp; ••••&nbsp; ••••&nbsp; 4821</div>
+          <div class="cc-bottom">
+            <div><small>Cardholder</small><strong id="ccName">Aarav</strong></div>
+            <div><small>Paying</small><strong id="ccAmount">₹1,200</strong></div>
+            <div><small>From</small><strong id="ccCity">Dehradun</strong></div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="field full">
+            <label for="customer_id">Cardholder</label>
+            <select id="customer_id">
+              {% for k, c in customers.items() %}<option value="{{ k }}">{{ c.name }}</option>{% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="amount">Amount (₹)</label>
+            <input id="amount" type="number" min="1" value="1200">
+          </div>
+
+          <div class="field">
+            <label for="city">Transaction location</label>
+            <select id="city">
+              {% for c in cities %}<option>{{ c }}</option>{% endfor %}
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="merchant_risk">Merchant type</label>
+            <select id="merchant_risk">
+              <option value="0">Everyday (grocery, fuel)</option>
+              <option value="1">Electronics / travel</option>
+              <option value="2">Jewellery / gift cards / crypto</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="channel">Payment method</label>
+            <select id="channel">
+              <option value="chip">In-store (chip/PIN)</option>
+              <option value="swipe">In-store (swipe)</option>
+              <option value="online">Online (card not present)</option>
+            </select>
+          </div>
+        </div>
+
+        <button id="payBtn" class="btn-primary">Pay now</button>
+      </section>
+
+      <!-- RIGHT: automatic fraud check -->
+      <section class="glass result">
+        <h2>Fraud check</h2>
+        <p class="muted">Runs automatically when you pay. No manual selection.</p>
+
+        <div class="gauge" id="gauge">
+          <svg viewBox="0 0 140 140">
+            <circle class="track" cx="70" cy="70" r="58"></circle>
+            <circle class="meter" id="meter" cx="70" cy="70" r="58"></circle>
+          </svg>
+          <div class="gauge-center">
+            <span id="percent">–</span>
+            <small>fraud risk</small>
+          </div>
+        </div>
+
+        <div class="verdict" id="label">Waiting for payment</div>
+        <div class="status-pill" id="status"></div>
+
+        <div id="otpbox">
+          <input id="otp" placeholder="Enter OTP (demo: 123456)" inputmode="numeric">
+          <button id="otpBtn" class="btn-primary">Verify OTP</button>
+        </div>
+        <span id="prob" hidden></span>
+        <span id="fill" hidden></span>
+      </section>
+    </div>
+
+    <section class="glass ledger-card">
+      <h2>Recent transactions</h2>
+      <div class="table-wrap"><table id="ledger"></table></div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
